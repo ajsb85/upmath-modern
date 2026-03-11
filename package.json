@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-spectrum/s2": "^3.0.0-nightly-796738501-260310",
     "clsx": "^2.1.1",
     "file-saver": "^2.0.5",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.1",
     "markdown-it-sub": "^2.0.0",
     "markdown-it-sup": "^2.0.0",
+    "monaco-editor": "^0.55.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
