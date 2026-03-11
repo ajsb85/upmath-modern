@@ -15,13 +15,15 @@ Upmath Modern supports standard GFM syntax along with powerful scientific extens
 - **Subscripts & Superscripts**: *E*~0~=*mc*^2^.
 - **Synchronized Scrolling**: The source and preview panes stay in perfect sync.
 
-## Native LaTeX Support
+## LaTeX & Diagrams
 
 Upmath converts LaTeX equations in double-dollars \`$$\`: $$ax^2+bx+c=0$$. 
 
 Equations are rendered as high-quality SVGs. For inline equations, use the \`\\inline\` prefix: $$\\inline p={1\\over q}$$.
 
 ### Advanced Mathematics
+
+Place big equations on separate lines:
 
 $$x_{1,2} = {-b\\pm\\sqrt{b^2 - 4ac} \\over 2a}.$$
 
@@ -66,8 +68,31 @@ decoration={snake,amplitude=.3mm,segment length=2.5mm,post length=0.9mm},decorat
 \\draw[snake it](C1)--(A2) node[pos=0.6,below] {$c\\Delta t$};
 \\draw[->,semithick](\\ww,\\p+0.44*\\h)-- +(\\w-\\ww,0) node[pos=0.6,above] {$v\\Delta t$};
 \\draw[snake it](D)--(B2);
-\\draw[thin](\\r,0) arc (0:atan2(\p,\\w):\\r) node[midway,right,yshift=0.06cm] {$\\theta$};
+\\draw[thin](\\r,0) arc (0:atan2(\\p,\\w):\\r) node[midway,right,yshift=0.06cm] {$\\theta$};
 \\draw[opacity=0](-0.40,-0.14)-- ++(0,5.06);
+\\end{tikzpicture}$$
+
+### Function Plots
+
+$$\\begin{tikzpicture}[scale=1.0544]\\small
+\\begin{axis}[axis line style=gray,
+	samples=120,
+	width=9.0cm,height=6.4cm,
+	xmin=-1.5, xmax=1.5,
+	ymin=0, ymax=1.8,
+	restrict y to domain=-0.2:2,
+	ytick={1},
+	xtick={-1,1},
+	axis equal,
+	axis x line=center,
+	axis y line=center,
+	xlabel=$x$,ylabel=$y$]
+\\addplot[red,domain=-2:1,semithick]{exp(x)};
+\\addplot[black]{x+1};
+\\addplot[] coordinates {(1,1.5)} node{$y=x+1$};
+\\addplot[red] coordinates {(-1,0.6)} node{$y=e^x$};
+\\path (axis cs:0,0) node [anchor=north west,yshift=-0.07cm] {0};
+\\end{axis}
 \\end{tikzpicture}$$
 
 ## Technical Architecture
