@@ -1,4 +1,4 @@
-# Contributing to UpMath Modern
+# Contributing to Upmath Modern
 
 First off, thanks for taking the time to contribute! 🎉
 
@@ -10,7 +10,7 @@ First off, thanks for taking the time to contribute! 🎉
     cd upmath-modern
     ```
 2.  **Install dependencies**:
-    Ensure you have Node.js installed (v18+ recommended).
+    Ensure you have Node.js installed (v20+ recommended). We use `npm` for package management.
     ```bash
     npm install
     ```
@@ -25,7 +25,7 @@ First off, thanks for taking the time to contribute! 🎉
 To maintain a high standard of code quality, we use ESLint and TypeScript for static analysis. Please ensure your changes pass all checks before submitting a pull request.
 
 ### Linting
-We use ESLint to catch common mistakes and enforce a consistent style.
+We use ESLint 9 with flat config to catch common mistakes and enforce a consistent style.
 ```bash
 npm run lint
 ```
@@ -61,7 +61,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 ## Deployment
 
-The project is deployed on Vercel. While automatic deployments can be configured, we provide a manual deployment script for authorized maintainers.
+The project is deployed on Vercel.
 
 ### Manual Production Deploy
 To deploy the current state of the repository to production:
@@ -71,7 +71,7 @@ To deploy the current state of the repository to production:
     export VERCEL_TOKEN="your_token_here"
     npm run deploy
     ```
-This script uses the Vercel CLI to perform a production build and deployment under the defined team scope.
+This script uses the Vercel CLI to perform a production build and deployment.
 
 ## Pull Requests
 
