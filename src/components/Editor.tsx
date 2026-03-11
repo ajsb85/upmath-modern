@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as monaco from 'monaco-editor';
 import { useMarkdown } from '../hooks/useMarkdown';
-import { Button, ButtonGroup, Heading, Content } from '@react-spectrum/s2';
+import { Button, ButtonGroup, Heading, Content, DialogTrigger, ActionButton, Dialog, Text } from '@react-spectrum/s2';
 import { DEFAULT_TEXT } from '../lib/defaultText';
 import '../styles/Editor.css';
 
@@ -9,7 +9,6 @@ export function Editor() {
     const { content, setContent, html } = useMarkdown(DEFAULT_TEXT);
     const editorRef = useRef<HTMLDivElement>(null);
     const previewRef = useRef<HTMLDivElement>(null);
-    // Use ref for the instance to avoid useEffect dependency issues
     const editorInstanceRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
     useEffect(() => {
@@ -44,18 +43,14 @@ export function Editor() {
                 const preview = previewRef.current;
                 if (!preview) return;
                 
-                // Only sync if the editor triggered the scroll
                 if (e.scrollTopChanged) {
                     const scrollHeight = instance.getScrollHeight();
                     const clientHeight = editorRef.current?.clientHeight || 0;
-                    
-                    // Prevent divide by zero and negative percentages
                     const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
                     if (maxScrollTop === 0) return;
 
                     const percentage = e.scrollTop / maxScrollTop;
                     const previewMaxScroll = preview.scrollHeight - preview.clientHeight;
-                    
                     const targetScroll = percentage * previewMaxScroll;
                     if (Math.abs(preview.scrollTop - targetScroll) > 2) {
                         preview.scrollTop = targetScroll;
@@ -71,7 +66,7 @@ export function Editor() {
                 editorInstanceRef.current = null;
             };
         }
-    }, [setContent]); 
+    }, [setContent]);
 
     const handleClear = () => {
         if (editorInstanceRef.current) {
@@ -100,7 +95,6 @@ export function Editor() {
         const scrollHeight = instance.getScrollHeight();
         const clientHeight = editorRef.current?.clientHeight || 0;
         const editorMaxScroll = Math.max(0, scrollHeight - clientHeight);
-        
         const targetScroll = percentage * editorMaxScroll;
         
         if (Math.abs(instance.getScrollTop() - targetScroll) > 2) {
@@ -111,7 +105,33 @@ export function Editor() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: 'var(--s2-color-bg-base)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px', height: '60px', borderBottom: '1px solid var(--s2-color-border-subtle)', backgroundColor: 'var(--s2-color-bg-layer-1)' }}>
-                <Heading level={2}>Upmath Modern</Heading>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Heading level={2}>Upmath Modern</Heading>
+                    <DialogTrigger>
+                        <ActionButton isQuiet>About</ActionButton>
+                        <Dialog size="S">
+                            {({close}) => (
+                                <>
+                                    <Heading slot="title">About Upmath Modern</Heading>
+                                    <Content>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <Text>A modernized Markdown and LaTeX online editor.</Text>
+                                            <hr style={{ border: '0', borderTop: '1px solid var(--s2-color-border-subtle)', margin: '8px 0' }} />
+                                            <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>
+                                                <div><strong>Version:</strong> {__APP_VERSION__}</div>
+                                                <div><strong>Commit:</strong> {__COMMIT_HASH__}</div>
+                                                <div><strong>Built:</strong> {new Date(__BUILD_DATE__).toLocaleString()}</div>
+                                            </div>
+                                        </div>
+                                    </Content>
+                                    <ButtonGroup>
+                                        <Button onPress={close} variant="accent">Close</Button>
+                                    </ButtonGroup>
+                                </>
+                            )}
+                        </Dialog>
+                    </DialogTrigger>
+                </div>
                 <ButtonGroup>
                     <Button variant="secondary" onPress={handleClear}>Clear</Button>
                     <Button variant="primary" onPress={handleSave}>Save</Button>
