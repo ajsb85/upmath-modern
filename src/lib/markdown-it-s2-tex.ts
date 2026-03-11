@@ -7,29 +7,48 @@ interface MarkdownItS2TexOptions {
     noreplace?: boolean;
 }
 
-function scanDelims(state: any, start: number) {
-    let pos = state.pos, lastChar, nextChar, count,
-        isLastWhiteSpace, isLastPunctChar,
-        isNextWhiteSpace, isNextPunctChar,
-        can_open = true,
-        can_close = true,
-        max = state.posMax;
+// Defining a minimal interface for the state to avoid 'any'
+interface MarkdownItState {
+    pos: number;
+    posMax: number;
+    src: string;
+    pending: string;
+    md: {
+        utils: {
+            isWhiteSpace: (char: number) => boolean;
+            isPunctChar: (str: string) => boolean;
+            isMdAsciiPunct: (char: number) => boolean;
+            escapeHtml: (str: string) => string;
+        };
+        inline: {
+            skipToken: (state: MarkdownItState) => void;
+        };
+    };
+    push: (type: string, tag: string, nesting: number) => { content: string; markup: string; tag: string };
+}
+
+function scanDelims(state: MarkdownItState, start: number) {
+    const pos = state.pos;
+    const max = state.posMax;
         
     const isWhiteSpace = state.md.utils.isWhiteSpace;
     const isPunctChar = state.md.utils.isPunctChar;
     const isMdAsciiPunct = state.md.utils.isMdAsciiPunct;
 
-    lastChar = start > 0 ? state.src.charCodeAt(start - 1) : 0x20;
+    const lastChar = start > 0 ? state.src.charCodeAt(start - 1) : 0x20;
+    let can_open = true;
+    let can_close = true;
+    
     if (pos >= max) {
         can_open = false;
     }
-    count = pos - start;
+    const count = pos - start;
 
-    nextChar = pos < max ? state.src.charCodeAt(pos) : 0x20;
-    isLastPunctChar = isMdAsciiPunct(lastChar) || isPunctChar(String.fromCharCode(lastChar));
-    isNextPunctChar = isMdAsciiPunct(nextChar) || isPunctChar(String.fromCharCode(nextChar));
-    isLastWhiteSpace = isWhiteSpace(lastChar);
-    isNextWhiteSpace = isWhiteSpace(nextChar);
+    const nextChar = pos < max ? state.src.charCodeAt(pos) : 0x20;
+    const isLastPunctChar = isMdAsciiPunct(lastChar) || isPunctChar(String.fromCharCode(lastChar));
+    const isNextPunctChar = isMdAsciiPunct(nextChar) || isPunctChar(String.fromCharCode(nextChar));
+    const isLastWhiteSpace = isWhiteSpace(lastChar);
+    const isNextWhiteSpace = isWhiteSpace(nextChar);
 
     if (isNextWhiteSpace) {
         can_open = false;
@@ -54,15 +73,10 @@ function scanDelims(state: any, start: number) {
 }
 
 function makeMath_inline(open: string, close: string) {
-    return function math_inline(state: any, silent: boolean) {
-        let startCount,
-            found,
-            res,
-            token,
-            closeDelim,
-            max = state.posMax,
-            start = state.pos,
-            openDelim = state.src.slice(start, start + open.length);
+    return function math_inline(state: MarkdownItState, silent: boolean) {
+        const max = state.posMax;
+        const start = state.pos;
+        const openDelim = state.src.slice(start, start + open.length);
 
         if (openDelim !== open) {
             return false;
@@ -71,8 +85,8 @@ function makeMath_inline(open: string, close: string) {
             return false;
         }
 
-        res = scanDelims(state, start + open.length);
-        startCount = res.delims;
+        const res = scanDelims(state, start + open.length);
+        const startCount = res.delims;
 
         if (!res.can_open) {
             state.pos += startCount;
@@ -82,11 +96,12 @@ function makeMath_inline(open: string, close: string) {
 
         state.pos = start + open.length;
 
+        let found = false;
         while (state.pos < max) {
-            closeDelim = state.src.slice(state.pos, state.pos + close.length);
+            const closeDelim = state.src.slice(state.pos, state.pos + close.length);
             if (closeDelim === close) {
-                res = scanDelims(state, state.pos + close.length);
-                if (res.can_close) {
+                const resClose = scanDelims(state, state.pos + close.length);
+                if (resClose.can_close) {
                     found = true;
                     break;
                 }
@@ -99,8 +114,8 @@ function makeMath_inline(open: string, close: string) {
             return false;
         }
 
-        let m = null,
-            tag = 'tex-inline';
+        let m = null;
+        let tag = 'tex-inline';
 
         if (start === 0) {
             const srcEnd = state.src.substring(state.pos + close.length);
@@ -114,7 +129,7 @@ function makeMath_inline(open: string, close: string) {
         state.posMax = state.pos;
         state.pos = start + close.length;
 
-        token = state.push('math_inline', tag, 0);
+        const token = state.push('math_inline', tag, 0);
         token.content = state.src.slice(state.pos, state.posMax);
         token.markup = open;
 
@@ -122,9 +137,9 @@ function makeMath_inline(open: string, close: string) {
         state.posMax = max;
 
         if (m) {
-            token = state.push('math_number', 'tex-number', 0);
-            token.content = m[1];
-            token.markup = '()';
+            const numToken = state.push('math_number', 'tex-number', 0);
+            numToken.content = m[1];
+            numToken.markup = '()';
         }
 
         return true;
@@ -137,7 +152,7 @@ export default function markdownitS2Tex(md: MarkdownIt, options: MarkdownItS2Tex
 
     const math_inline = makeMath_inline(inlineOpen, inlineClose);
 
-    md.inline.ruler.before('escape', 'math_inline', math_inline);
+    md.inline.ruler.before('escape', 'math_inline', math_inline as never);
 
     const protocol = typeof options.protocol !== 'undefined' ? options.protocol : (typeof location !== 'undefined' && location.protocol === 'https:' ? 'https:' : 'http:');
 

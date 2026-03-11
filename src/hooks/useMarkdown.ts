@@ -3,7 +3,6 @@ import MarkdownIt from 'markdown-it';
 import markdownItSub from 'markdown-it-sub';
 import markdownItSup from 'markdown-it-sup';
 import markdownitS2Tex from '../lib/markdown-it-s2-tex';
-// @ts-ignore
 import hljs from 'highlight.js';
 
 export function useMarkdown(initialContent: string = '') {
@@ -23,7 +22,9 @@ export function useMarkdown(initialContent: string = '') {
                 if (lang && hljs.getLanguage(lang)) {
                     try {
                         return hljs.highlight(str, { language: lang }).value;
-                    } catch (__) {}
+                    } catch {
+                        // Ignore highlight errors
+                    }
                 }
                 return '';
             }

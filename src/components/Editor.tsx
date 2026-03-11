@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as monaco from 'monaco-editor';
 import { useMarkdown } from '../hooks/useMarkdown';
 import { Button, ButtonGroup, Heading, Content } from '@react-spectrum/s2';
@@ -9,10 +9,11 @@ export function Editor() {
     const { content, setContent, html } = useMarkdown(DEFAULT_TEXT);
     const editorRef = useRef<HTMLDivElement>(null);
     const previewRef = useRef<HTMLDivElement>(null);
-    const [editorInstance, setEditorInstance] = useState<monaco.editor.IStandaloneCodeEditor | null>(null);
+    // Use ref for the instance to avoid useEffect dependency issues
+    const editorInstanceRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
     useEffect(() => {
-        if (editorRef.current && !editorInstance) {
+        if (editorRef.current && !editorInstanceRef.current) {
             const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             
             const instance = monaco.editor.create(editorRef.current, {
@@ -48,6 +49,7 @@ export function Editor() {
                     const scrollHeight = instance.getScrollHeight();
                     const clientHeight = editorRef.current?.clientHeight || 0;
                     
+                    // Prevent divide by zero and negative percentages
                     const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
                     if (maxScrollTop === 0) return;
 
@@ -61,18 +63,19 @@ export function Editor() {
                 }
             });
 
-            setEditorInstance(instance);
+            editorInstanceRef.current = instance;
 
             return () => {
                 mediaQuery.removeEventListener('change', themeChangeListener);
                 instance.dispose();
+                editorInstanceRef.current = null;
             };
         }
-    }, []); // Run only once
+    }, [setContent]); 
 
     const handleClear = () => {
-        if (editorInstance) {
-            editorInstance.setValue('');
+        if (editorInstanceRef.current) {
+            editorInstanceRef.current.setValue('');
             setContent('');
         }
     };
@@ -88,19 +91,20 @@ export function Editor() {
     };
 
     const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        if (!editorInstance) return;
+        const instance = editorInstanceRef.current;
+        if (!instance) return;
         
         const preview = e.target as HTMLDivElement;
         const percentage = preview.scrollTop / (preview.scrollHeight - preview.clientHeight);
         
-        const scrollHeight = editorInstance.getScrollHeight();
+        const scrollHeight = instance.getScrollHeight();
         const clientHeight = editorRef.current?.clientHeight || 0;
         const editorMaxScroll = Math.max(0, scrollHeight - clientHeight);
         
         const targetScroll = percentage * editorMaxScroll;
         
-        if (Math.abs(editorInstance.getScrollTop() - targetScroll) > 2) {
-            editorInstance.setScrollTop(targetScroll);
+        if (Math.abs(instance.getScrollTop() - targetScroll) > 2) {
+            instance.setScrollTop(targetScroll);
         }
     };
 
