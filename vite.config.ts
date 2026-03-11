@@ -2,7 +2,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { execSync } from 'child_process'
 
-const commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+let commitHash = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'unknown';
+try {
+  if (commitHash === 'unknown') {
+    commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+  }
+} catch (e) {
+  // Fallback if git is not available
+}
 const buildDate = new Date().toISOString();
 
 // https://vite.dev/config/
