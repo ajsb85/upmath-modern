@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "vercel --prod --token $VERCEL_TOKEN --scope team_rBqAefwWoGFFawgPLKHAB9zO --yes"
   },
   "dependencies": {
     "@react-spectrum/s2": "^3.0.0-nightly-796738501-260310",
