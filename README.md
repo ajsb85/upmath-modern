@@ -1,4 +1,4 @@
-# Upmath Modern
+# Upmath Modern v2.0
 
 A modernized, blazing-fast Markdown and LaTeX online editor.
 
@@ -9,42 +9,40 @@ A modernized, blazing-fast Markdown and LaTeX online editor.
 
 ## Overview
 
-Upmath Modern is a complete rewrite of the classic Upmath editor, transitioning from a legacy PHP and plain JavaScript stack to a fully typed React application built with TypeScript and Vite. It provides a seamless, zero-backend, client-side experience for drafting rich mathematical documents.
+Upmath Modern is a high-performance, client-side Markdown editor with native LaTeX support. It marks a complete departure from the legacy PHP architecture, offering a professional editing experience powered by the same engine as VS Code (Monaco Editor) and a sleek, responsive UI built with Adobe's Spectrum 2 design system.
 
 **Live Demo**: [https://upmath-modern.vercel.app](https://upmath-modern.vercel.app)
 
-## Features
+## Key Features
 
--   **Monaco Editor**: Powered by the same engine as VS Code for a professional editing experience.
--   **Markdown & LaTeX**: Full support for standard Markdown and `$$` delimited LaTeX math environments.
--   **Live Preview**: Real-time rendering with optimized debouncing.
--   **Synchronized Scrolling**: Dual-pane editor where the source and preview scroll in perfect sync.
--   **Adaptive Dark Mode**: Fully responsive UI that adapts to your system theme.
--   **Client-Side Only**: Eliminates the need for a PHP backend. Everything runs in the browser.
--   **AI Agent Skills**: Includes structured instructions for LLMs to generate Upmath-compatible content.
+-   **Professional Editing**: Integrated Microsoft Monaco Editor for syntax highlighting, multi-cursor support, and IDE-grade performance.
+-   **Native LaTeX Support**: Seamlessly render complex mathematical equations and TikZ diagrams using `$$` delimiters.
+-   **Spectrum 2 UI**: A modern, accessible, and professional interface built with `@react-spectrum/s2`.
+-   **Adaptive Theming**: Full support for Light and Dark modes, automatically syncing with your operating system and dynamically inverting math equations for perfect legibility.
+-   **Zero Backend**: Fast, secure, and privacy-focused—all rendering happens directly in your browser.
+-   **AI-Ready**: Includes a dedicated "AI Agent Skill" to help LLMs generate perfectly formatted content for Upmath.
+-   **Synchronized Real-time Preview**: Dual-pane layout with intelligent scroll synchronization.
 
-## Tech Stack
+## Architecture & Tech Stack
 
--   **Framework**: React 18
--   **Language**: TypeScript
--   **UI Library**: [@react-spectrum/s2](https://react-spectrum.adobe.com/s2/index.html)
--   **Bundler**: Vite
--   **Editor**: Monaco Editor
--   **Markdown Engine**: `markdown-it` (with custom LaTeX extensions)
-
-## AI Agent Skills
-
-This repository contains a `skills/` directory with a dedicated skill for AI Agents. You can use `skills/upmath-writer.md` to instruct an LLM on how to produce perfectly formatted scientific content for this editor.
+-   **Frontend Framework**: [React 19](https://react.dev/)
+-   **Type Safety**: [TypeScript 5.9](https://www.typescriptlang.org/)
+-   **Build Tool**: [Vite 6 (Stable)](https://vitejs.dev/)
+-   **Design System**: [@react-spectrum/s2 (Nightly)](https://react-spectrum.adobe.com/s2/index.html)
+-   **Code Editor**: [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+-   **Markdown Engine**: `markdown-it` with custom LaTeX plugins.
 
 ## Getting Started
 
-To run this project locally:
-
 ```bash
+# Clone and enter the project
+git clone https://github.com/ajsb85/upmath-modern.git
+cd upmath-modern
+
 # Install dependencies
 npm install
 
-# Start the dev server
+# Start development server
 npm run dev
 
 # Build for production
@@ -53,8 +51,8 @@ npm run build
 
 ## Contributing
 
-Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for our code standards and deployment workflows.
 
 ## License
 
-MIT
+MIT - See [LICENSE](./LICENSE) for details.
